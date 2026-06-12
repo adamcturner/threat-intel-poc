@@ -862,17 +862,8 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
           <div class="radio-main">All Objects</div>
           <div class="radio-desc">Disable this IOC using a broader scope.</div>
 
-          <!-- Hash sub: one option -->
-          <div class="sub-options hidden" id="sub-hash">
-            <div style="height:6px;"></div>
-            <div class="sub-option selected" id="sub-hash-all" onclick="event.stopPropagation();selectSub('hash-all')">
-              <div class="radio-dot"><div class="radio-dot-inner"></div></div>
-              <div>
-                <div class="sub-main">Disable for this file hash across all hosts</div>
-                <div class="sub-desc">This file hash will not trigger detections on any host in your account.</div>
-              </div>
-            </div>
-          </div>
+          <!-- Hash: inline description, no nested choice -->
+          <div class="hidden" id="sub-hash" style="margin-top:8px;font-size:12px;color:#cdd9e5;">This IOC will not be matched against this file hash on any object.</div>
 
           <!-- Yara sub: two options -->
           <div class="sub-options hidden" id="sub-yara">
@@ -966,7 +957,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
       if (currentMatchType === 'hash') {
         subHash.classList.remove('hidden');
         subYara.classList.add('hidden');
-        if (!currentSub) selectSub('hash-all');
+        currentSub = 'hash-all';
       } else {
         subYara.classList.remove('hidden');
         subHash.classList.add('hidden');
