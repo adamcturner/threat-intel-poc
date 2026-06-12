@@ -517,7 +517,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
             IOC Details
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
           </div>
-          <button class="btn btn-danger" onclick="openDisableModal()">DISABLE IOCS</button>
+          <button class="btn btn-danger" onclick="openDisableModal()">DISABLE IOC</button>
         </div>
         <div class="kv-grid">
           <div class="kv-item">
@@ -585,7 +585,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
       <!-- Warning -->
       <div class="detail-warning">
         <span class="warn-icon">ℹ</span>
-        <span>There could be older snapshots that contain the file. We recommend performing a <button class="link-btn">threat hunt</button> to check all snapshots.</span>
+        <span>Older snapshots may contain this file. We recommend running a <button class="link-btn">threat hunt</button> to check all snapshots.</span>
       </div>
 
     </div><!-- end right-pane -->
@@ -615,7 +615,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
         </svg>
         Google Threat Intelligence — Disabled IOCs
       </div>
-      <button class="btn btn-secondary" onclick="goBack()">← Back to detection</button>
+      <button class="btn btn-secondary" onclick="goBack()">← Back to Detection</button>
     </div>
   </div>
 
@@ -685,7 +685,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
         <div class="sub-tab-bar">
           <button class="sub-tab active" onclick="switchSub('all',this)">All</button>
           <button class="sub-tab" onclick="switchSub('hashSub',this)">Hash</button>
-          <button class="sub-tab" onclick="switchSub('yaraSub',this)">Yara</button>
+          <button class="sub-tab" onclick="switchSub('yaraSub',this)">YARA</button>
         </div>
 
         <!-- All -->
@@ -841,17 +841,17 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
       </div>
 
       <!-- Match description (shown based on type) -->
-      <div id="desc-hash" class="match-desc hidden">This IOC only matches the specific file hash.</div>
-      <div id="desc-yara" class="match-desc hidden">This IOC can match different file data hashes.</div>
+      <div id="desc-hash" class="match-desc hidden">This IOC matches a specific file hash.</div>
+      <div id="desc-yara" class="match-desc hidden">This IOC can match files with different data hashes.</div>
 
-      <div class="question-label" style="margin-bottom:12px;">Choose the scope of this exception.</div>
+      <div class="question-label" style="margin-bottom:12px;">Choose the scope of this suppression.</div>
 
       <!-- Option: Single Object -->
       <div class="radio-option selected" id="opt-one" onclick="selectScope('one')">
         <div class="radio-dot"><div class="radio-dot-inner"></div></div>
         <div>
           <div class="radio-main">Single Object</div>
-          <div class="radio-desc">The IOC is disabled for all files on this object only. Other objects will continue to be monitored.</div>
+          <div class="radio-desc">This IOC will be suppressed for all files on this object. Other objects remain unaffected.</div>
         </div>
       </div>
 
@@ -860,7 +860,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
         <div class="radio-dot"><div class="radio-dot-inner"></div></div>
         <div style="flex:1;">
           <div class="radio-main">All Objects</div>
-          <div class="radio-desc" id="opt-many-desc">Disable this IOC using a broader scope.</div>
+          <div class="radio-desc" id="opt-many-desc">Apply this suppression across all objects.</div>
 
           <!-- Yara sub: two options -->
           <div class="sub-options hidden" id="sub-yara">
@@ -868,15 +868,15 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
             <div class="sub-option selected" id="sub-yara-hash" onclick="event.stopPropagation();selectSub('yara-hash')">
               <div class="radio-dot"><div class="radio-dot-inner"></div></div>
               <div>
-                <div class="sub-main">Disable for the matched file data hash for all objects</div>
-                <div class="sub-desc">Only files with this specific data hash will be suppressed on any host. The rule continues to match other file variants.</div>
+                <div class="sub-main">Suppress for the matched file hash across all objects</div>
+                <div class="sub-desc">Files matching this exact data hash will be suppressed on all hosts. The rule remains active for other file variants.</div>
               </div>
             </div>
             <div class="sub-option" id="sub-yara-all" onclick="event.stopPropagation();selectSub('yara-all')">
               <div class="radio-dot"><div class="radio-dot-inner"></div></div>
               <div>
-                <div class="sub-main">Disable for all files across the entire account</div>
-                <div class="sub-desc" style="color:#f0883e;">This YARA rule will not match any file on any host. All detection coverage for this rule is removed.</div>
+                <div class="sub-main">Suppress for all files across all objects</div>
+                <div class="sub-desc" style="color:#f0883e;">This YARA rule will no longer match any file on any object. All detection coverage for this rule will be removed.</div>
               </div>
             </div>
           </div>
@@ -924,8 +924,8 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
 
     // Set All Objects description based on match type
     document.getElementById('opt-many-desc').textContent = currentMatchType === 'hash'
-      ? 'This IOC will not be matched against this file hash on any object.'
-      : 'Disable this IOC using a broader scope.';
+      ? 'This file hash will be suppressed across all objects.'
+      : 'Apply this suppression across all objects.';
 
     // Reset to Single Object
     selectScope('one');
@@ -985,7 +985,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
 
     if (currentScope === 'one') {
       addObjectRow(fname, currentIocName, currentMatchType, family, now, user);
-      showToast('✓ IOC disabled for ' + fname + ' only.');
+      showToast('✓ IOC suppressed for ' + fname + '.');
       setTimeout(function() {
         showResultsPage();
         switchPrimary('byObject', document.querySelectorAll('.primary-tab')[0]);
@@ -994,7 +994,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
     } else if (currentMatchType === 'hash') {
       // All Objects, hash: single option (disable for file hash across all hosts)
       addFileRow(currentIocName, 'hash', 'hash', currentIocName, family, now, user);
-      showToast('✓ IOC disabled for file hash across all hosts.');
+      showToast('✓ File hash suppressed across all objects.');
       setTimeout(function() {
         showResultsPage();
         switchPrimary('byFile', document.querySelectorAll('.primary-tab')[1]);
@@ -1004,7 +1004,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
     } else if (currentSub === 'yara-hash') {
       // All Objects, yara, matched hash scope
       addFileRow(currentIocName, 'yara', 'hash', '44d88612fea8a8f36018365600b2e', family, now, user);
-      showToast('✓ IOC disabled for matched file hash across all hosts.');
+      showToast('✓ Matched file hash suppressed across all objects.');
       setTimeout(function() {
         showResultsPage();
         switchPrimary('byFile', document.querySelectorAll('.primary-tab')[1]);
@@ -1014,7 +1014,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
     } else {
       // All Objects, yara, account-wide (all files)
       addFileRow(currentIocName, 'yara', 'all', null, family, now, user);
-      showToast('✓ IOC disabled for all files account-wide.');
+      showToast('✓ IOC suppressed for all files across all objects.');
       setTimeout(function() {
         showResultsPage();
         switchPrimary('byFile', document.querySelectorAll('.primary-tab')[1]);
