@@ -392,7 +392,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
             </tr>
           </thead>
           <tbody>
-            <tr class="selected" onclick="selectFile(this, 'eicar.com', 3)">
+            <tr class="selected" onclick="selectFile(this,'eicar.com',3,'yara','detect_ransomware_behavior')">
               <td><input type="checkbox" checked/></td>
               <td><span class="file-name">eicar.com</span></td>
               <td>May 12, 2026, 8:21…</td>
@@ -401,7 +401,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
               <td><span class="match-yara">YARA rule</span></td>
               <td>Jun 11, 2026, 1:2…</td>
             </tr>
-            <tr onclick="selectFile(this, 'eicar140.dll', 1)">
+            <tr onclick="selectFile(this,'eicar140.dll',1,'hash','44d88612fea8a8f36018365600b2e')">
               <td><input type="checkbox"/></td>
               <td><span class="file-name">eicar140.dll</span></td>
               <td>Jun 11, 2026, 12:5…</td>
@@ -410,7 +410,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
               <td><span class="match-hash">File hash</span></td>
               <td>Jun 11, 2026, 7:2…</td>
             </tr>
-            <tr onclick="selectFile(this, 'eicar_nt_connection…', 1)">
+            <tr onclick="selectFile(this,'eicar_nt_connection…',1,'yara','eicar_signature_detect')">
               <td><input type="checkbox"/></td>
               <td><span class="file-name">eicar_nt_connection…</span></td>
               <td>Jun 11, 2026, 12:5…</td>
@@ -419,7 +419,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
               <td><span class="match-yara">YARA rule</span></td>
               <td>Jun 11, 2026, 7:2…</td>
             </tr>
-            <tr onclick="selectFile(this, 'eicar.dll', 1)">
+            <tr onclick="selectFile(this,'eicar.dll',1,'yara','eicar_signature_detect')">
               <td><input type="checkbox"/></td>
               <td><span class="file-name">eicar.dll</span></td>
               <td>Jun 11, 2026, 12:5…</td>
@@ -428,7 +428,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
               <td><span class="match-yara">YARA rule</span></td>
               <td>Jun 11, 2026, 7:2…</td>
             </tr>
-            <tr onclick="selectFile(this, 'phaethon.exe', 1)">
+            <tr onclick="selectFile(this,'phaethon.exe',1,'yara','phaethon_loader_detect')">
               <td><input type="checkbox"/></td>
               <td><span class="file-name">phaethon.exe</span></td>
               <td>Jun 11, 2026, 12:5…</td>
@@ -437,7 +437,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
               <td><span class="match-yara">YARA rule</span></td>
               <td>Jun 11, 2026, 7:2…</td>
             </tr>
-            <tr onclick="selectFile(this, 'eicar_print_spooler…', 1)">
+            <tr onclick="selectFile(this,'eicar_print_spooler…',1,'yara','spooler_exploit_detect')">
               <td><input type="checkbox"/></td>
               <td><span class="file-name">eicar_print_spooler…</span></td>
               <td>Jun 11, 2026, 12:5…</td>
@@ -446,7 +446,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
               <td><span class="match-yara">YARA rule</span></td>
               <td>Jun 11, 2026, 7:2…</td>
             </tr>
-            <tr onclick="selectFile(this, 'msacm32.dll', 1)">
+            <tr onclick="selectFile(this,'msacm32.dll',1,'hash','3395856ce8f1f2b73826ee7260230577')">
               <td><input type="checkbox"/></td>
               <td><span class="file-name">msacm32.dll</span></td>
               <td>Jun 11, 2026, 12:5…</td>
@@ -455,7 +455,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
               <td><span class="match-hash">File hash</span></td>
               <td>Jun 11, 2026, 7:2…</td>
             </tr>
-            <tr onclick="selectFile(this, 'ntlmrelay.py', 1)">
+            <tr onclick="selectFile(this,'ntlmrelay.py',1,'yara','ntlm_relay_tool_detect')">
               <td><input type="checkbox"/></td>
               <td><span class="file-name">ntlmrelay.py</span></td>
               <td>Jun 11, 2026, 12:5…</td>
@@ -464,7 +464,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
               <td><span class="match-yara">YARA rule</span></td>
               <td>Jun 11, 2026, 7:2…</td>
             </tr>
-            <tr onclick="selectFile(this, 'meterpreter_java…', 1)">
+            <tr onclick="selectFile(this,'meterpreter_java…',1,'yara','meterpreter_java_detect')">
               <td><input type="checkbox"/></td>
               <td><span class="file-name">meterpreter_java…</span></td>
               <td>Jun 11, 2026, 12:5…</td>
@@ -473,7 +473,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
               <td><span class="match-yara">YARA rule</span></td>
               <td>Jun 11, 2026, 7:2…</td>
             </tr>
-            <tr onclick="selectFile(this, 'msacm_pro.exe', 1)">
+            <tr onclick="selectFile(this,'msacm_pro.exe',1,'yara','msacm_malware_detect')">
               <td><input type="checkbox"/></td>
               <td><span class="file-name">msacm_pro.exe</span></td>
               <td>Jun 11, 2026, 12:5…</td>
@@ -482,7 +482,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
               <td><span class="match-yara">YARA rule</span></td>
               <td>Jun 11, 2026, 7:2…</td>
             </tr>
-            <tr onclick="selectFile(this, 'mimikatz_al.dll', 1)">
+            <tr onclick="selectFile(this,'mimikatz_al.dll',1,'hash','275a427c06ce4f9c0019bd6f9c0be05a')">
               <td><input type="checkbox"/></td>
               <td><span class="file-name">mimikatz_al.dll</span></td>
               <td>Jun 11, 2026, 12:5…</td>
@@ -826,64 +826,74 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
     </div>
     <div class="modal-body">
 
-      <!-- Context -->
+      <!-- Context row -->
       <div class="ioc-context">
         <div class="ctx-block">
           <div class="ctx-label">IOC</div>
-          <div class="ctx-val-name">detect_ransomware_behavior</div>
+          <div class="ctx-val-name" id="modal-ioc-name">—</div>
         </div>
         <div class="ctx-block" style="margin-left:auto;text-align:right;">
-          <div class="ctx-label">Type</div>
-          <div><span class="badge badge-yara">Yara rule</span></div>
+          <div class="ctx-label">Match type</div>
+          <div id="modal-ioc-badge"></div>
         </div>
       </div>
 
-      <!-- Scope question -->
-      <div>
-        <div class="question-label">How many objects should this IOC be disabled for?</div>
-        <div class="question-sub">Choose the scope of this exception.</div>
+      <!-- Match description (shown based on type) -->
+      <div id="desc-hash" class="question-sub hidden" style="margin-bottom:14px;">This IOC only matches the specific file hash.</div>
+      <div id="desc-yara" class="question-sub hidden" style="margin-bottom:14px;">This IOC can match different file data hashes.</div>
 
-        <!-- Option 1: 1 object -->
-        <div class="radio-option selected" id="opt-one" onclick="selectScope('one')">
-          <div class="radio-dot"><div class="radio-dot-inner"></div></div>
-          <div>
-            <div class="radio-main">1 object</div>
-            <div class="radio-desc">The IOC is disabled for all files on this object. Other objects will continue to process the IOC.</div>
-          </div>
+      <div class="question-label" style="margin-bottom:12px;">Choose the scope of this exception.</div>
+
+      <!-- Option: Single Object -->
+      <div class="radio-option selected" id="opt-one" onclick="selectScope('one')">
+        <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+        <div>
+          <div class="radio-main">Single Object</div>
+          <div class="radio-desc">The IOC is disabled for all files on this object only. Other objects will continue to be monitored.</div>
         </div>
+      </div>
 
-        <!-- Option 2: More than one object -->
-        <div class="radio-option" id="opt-many" onclick="selectScope('many')">
-          <div class="radio-dot"><div class="radio-dot-inner"></div></div>
-          <div style="flex:1;">
-            <div class="radio-main">More than one object</div>
-            <div class="radio-desc">Disable this IOC using a broader scope.</div>
+      <!-- Option: All Objects -->
+      <div class="radio-option" id="opt-many" onclick="selectScope('many')">
+        <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+        <div style="flex:1;">
+          <div class="radio-main">All Objects</div>
+          <div class="radio-desc">Disable this IOC using a broader scope.</div>
 
-            <div class="sub-options hidden" id="sub-options">
-              <div style="height:6px;"></div>
-
-              <div class="sub-option" id="sub-hashopt" onclick="event.stopPropagation();selectSub('hashopt')">
-                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
-                <div>
-                  <div class="sub-main">Disable for all copies of matched file data hash</div>
-                  <div class="sub-desc">The IOC will ignore all files containing the same data hash as the matched file. Other files won't be affected.</div>
-                </div>
+          <!-- Hash sub: one option -->
+          <div class="sub-options hidden" id="sub-hash">
+            <div style="height:6px;"></div>
+            <div class="sub-option selected" id="sub-hash-all" onclick="event.stopPropagation();selectSub('hash-all')">
+              <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+              <div>
+                <div class="sub-main">Disable for this file hash across all hosts</div>
+                <div class="sub-desc">This file hash will not trigger detections on any host in your account.</div>
               </div>
-
-              <div class="sub-option" id="sub-acctopt" onclick="event.stopPropagation();selectSub('acctopt')">
-                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
-                <div>
-                  <div class="sub-main">Disable this IOC for all files across the entire account</div>
-                  <div class="sub-desc">The IOC will not be matched for any files. This removes all detection coverage for this IOC.</div>
-                </div>
-              </div>
-
-              <div class="more-hint">Additional scoping options coming soon</div>
             </div>
           </div>
-        </div>
 
+          <!-- Yara sub: two options -->
+          <div class="sub-options hidden" id="sub-yara">
+            <div style="height:6px;"></div>
+            <div class="sub-option selected" id="sub-yara-hash" onclick="event.stopPropagation();selectSub('yara-hash')">
+              <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+              <div>
+                <div class="sub-main">Disable for the matched file data hash for all objects</div>
+                <div class="sub-desc">Only files with this specific data hash will be suppressed on any host. The rule continues to match other file variants.</div>
+              </div>
+            </div>
+            <div class="sub-option" id="sub-yara-all" onclick="event.stopPropagation();selectSub('yara-all')">
+              <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+              <div>
+                <div class="sub-main">Disable for all files across the entire account</div>
+                <div class="sub-desc" style="color:#f0883e;">This YARA rule will not match any file on any host. All detection coverage for this rule is removed.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
+
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
@@ -898,21 +908,39 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
 <script>
   var currentScope = 'one';
   var currentSub = null;
+  var currentMatchType = 'yara';
+  var currentIocName = 'detect_ransomware_behavior';
 
-  function selectFile(row, fname, matches) {
-    document.querySelectorAll('tr.selected').forEach(r => r.classList.remove('selected'));
+  function selectFile(row, fname, matches, matchType, iocName) {
+    document.querySelectorAll('tr.selected').forEach(function(r) { r.classList.remove('selected'); });
     row.classList.add('selected');
     document.getElementById('detail-fname').textContent = fname;
     document.getElementById('detail-matchcount').textContent = matches;
+    currentMatchType = matchType || 'yara';
+    currentIocName = iocName || 'detect_ransomware_behavior';
   }
 
   function openDisableModal() {
+    // Populate context row
+    document.getElementById('modal-ioc-name').textContent = currentIocName;
+    var badge = currentMatchType === 'hash'
+      ? '<span class="badge badge-hash">File hash</span>'
+      : '<span class="badge badge-yara">Yara rule</span>';
+    document.getElementById('modal-ioc-badge').innerHTML = badge;
+
+    // Show the right match description
+    document.getElementById('desc-hash').classList.toggle('hidden', currentMatchType !== 'hash');
+    document.getElementById('desc-yara').classList.toggle('hidden', currentMatchType !== 'yara');
+
+    // Reset to Single Object
     selectScope('one');
     document.getElementById('modal-overlay').classList.remove('hidden');
   }
+
   function closeModal() {
     document.getElementById('modal-overlay').classList.add('hidden');
   }
+
   document.getElementById('modal-overlay').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
   });
@@ -921,21 +949,40 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
     currentScope = which;
     var optOne = document.getElementById('opt-one');
     var optMany = document.getElementById('opt-many');
-    var subOpts = document.getElementById('sub-options');
+    var subHash = document.getElementById('sub-hash');
+    var subYara = document.getElementById('sub-yara');
+
     if (which === 'one') {
-      optOne.classList.add('selected'); optMany.classList.remove('selected');
-      subOpts.classList.add('hidden'); currentSub = null;
+      optOne.classList.add('selected');
+      optMany.classList.remove('selected');
+      subHash.classList.add('hidden');
+      subYara.classList.add('hidden');
+      currentSub = null;
     } else {
-      optMany.classList.add('selected'); optOne.classList.remove('selected');
-      subOpts.classList.remove('hidden');
-      if (!currentSub) selectSub('hashopt');
+      optMany.classList.add('selected');
+      optOne.classList.remove('selected');
+      if (currentMatchType === 'hash') {
+        subHash.classList.remove('hidden');
+        subYara.classList.add('hidden');
+        if (!currentSub) selectSub('hash-all');
+      } else {
+        subYara.classList.remove('hidden');
+        subHash.classList.add('hidden');
+        if (!currentSub) selectSub('yara-hash');
+      }
     }
   }
 
   function selectSub(which) {
     currentSub = which;
-    document.getElementById('sub-hashopt').classList.toggle('selected', which === 'hashopt');
-    document.getElementById('sub-acctopt').classList.toggle('selected', which === 'acctopt');
+    // Hash sub
+    var hashAll = document.getElementById('sub-hash-all');
+    if (hashAll) hashAll.classList.toggle('selected', which === 'hash-all');
+    // Yara subs
+    var yaraHash = document.getElementById('sub-yara-hash');
+    var yaraAll = document.getElementById('sub-yara-all');
+    if (yaraHash) yaraHash.classList.toggle('selected', which === 'yara-hash');
+    if (yaraAll) yaraAll.classList.toggle('selected', which === 'yara-all');
   }
 
   function confirmDisable() {
@@ -943,20 +990,46 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
     var now = 'Jun 12, 2026, ' + new Date().toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'});
     var user = 'Adam.Turner@rubrik.com';
     var fname = document.getElementById('detail-fname').textContent;
+    var family = 'Ransomware';
 
     if (currentScope === 'one') {
-      // Add to By Object table
-      addObjectRow(fname, 'detect_ransomware_behavior', 'yara', 'Ransomware', now, user);
+      addObjectRow(fname, currentIocName, currentMatchType, family, now, user);
       showToast('✓ IOC disabled for ' + fname + ' only.');
-    } else if (currentSub === 'hashopt') {
-      addFileRow('detect_ransomware_behavior', 'yara', 'hash', '44d88612fea8a8f36018365600b2e', 'Ransomware', now, user);
-      showToast('✓ IOC disabled for all copies of matched file hash.');
-    } else {
-      addFileRow('detect_ransomware_behavior', 'yara', 'all', null, 'Ransomware', now, user);
-      showToast('✓ IOC disabled account-wide.');
-    }
+      setTimeout(function() {
+        showResultsPage();
+        switchPrimary('byObject', document.querySelectorAll('.primary-tab')[0]);
+      }, 1200);
 
-    setTimeout(function() { showResultsPage(); }, 1200);
+    } else if (currentMatchType === 'hash') {
+      // All Objects, hash: single option (disable for file hash across all hosts)
+      addFileRow(currentIocName, 'hash', 'hash', currentIocName, family, now, user);
+      showToast('✓ IOC disabled for file hash across all hosts.');
+      setTimeout(function() {
+        showResultsPage();
+        switchPrimary('byFile', document.querySelectorAll('.primary-tab')[1]);
+        switchSub('hashSub', document.querySelectorAll('.sub-tab')[1]);
+      }, 1200);
+
+    } else if (currentSub === 'yara-hash') {
+      // All Objects, yara, matched hash scope
+      addFileRow(currentIocName, 'yara', 'hash', '44d88612fea8a8f36018365600b2e', family, now, user);
+      showToast('✓ IOC disabled for matched file hash across all hosts.');
+      setTimeout(function() {
+        showResultsPage();
+        switchPrimary('byFile', document.querySelectorAll('.primary-tab')[1]);
+        switchSub('all', document.querySelectorAll('.sub-tab')[0]);
+      }, 1200);
+
+    } else {
+      // All Objects, yara, account-wide (all files)
+      addFileRow(currentIocName, 'yara', 'all', null, family, now, user);
+      showToast('✓ IOC disabled for all files account-wide.');
+      setTimeout(function() {
+        showResultsPage();
+        switchPrimary('byFile', document.querySelectorAll('.primary-tab')[1]);
+        switchSub('yaraSub', document.querySelectorAll('.sub-tab')[2]);
+      }, 1200);
+    }
   }
 
   function addObjectRow(objName, iocName, iocType, family, date, user) {
@@ -988,7 +1061,6 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
       ? '<span class="scope-all">⚠ All files</span>'
       : '<div class="cell-copy"><span class="scope-hash">' + scopeHash + '</span><button class="copy-btn">⧉</button></div>';
 
-    // All table
     var allRow = '<tr class="new-row"><td><input type="checkbox"/></td>' +
       '<td><div class="cell-copy">' + iocCell + '<button class="copy-btn">⧉</button></div></td>' +
       '<td>' + badge + '</td>' +
@@ -1025,12 +1097,6 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
   function showResultsPage() {
     document.getElementById('detection-page').style.display = 'none';
     document.getElementById('results-page').style.display = 'flex';
-    // Default: show By File tab if scope was file-based, By Object if object-based
-    if (currentScope === 'one') {
-      switchPrimary('byObject', document.querySelectorAll('.primary-tab')[0]);
-    } else {
-      switchPrimary('byFile', document.querySelectorAll('.primary-tab')[1]);
-    }
   }
 
   function goBack() {
@@ -1039,7 +1105,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
   }
 
   function switchPrimary(id, btn) {
-    document.querySelectorAll('.primary-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.primary-tab').forEach(function(t) { t.classList.remove('active'); });
     btn.classList.add('active');
     document.getElementById('tab-byObject').style.display = 'none';
     document.getElementById('tab-byFile').style.display = 'none';
@@ -1047,7 +1113,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
   }
 
   function switchSub(id, btn) {
-    document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.sub-tab').forEach(function(t) { t.classList.remove('active'); });
     btn.classList.add('active');
     ['all','hashSub','yaraSub'].forEach(function(s) {
       document.getElementById('sub-' + s).style.display = s === id ? '' : 'none';
