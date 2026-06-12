@@ -182,6 +182,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
   z-index: 100; backdrop-filter: blur(3px);
 }
 .modal-overlay.hidden { display: none; }
+.hidden { display: none !important; }
 .modal {
   background: #161b22; border: 1px solid #30363d; border-radius: 12px;
   width: 520px; max-width: 96vw; box-shadow: 0 24px 60px rgba(0,0,0,0.7);
@@ -209,6 +210,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
 
 .question-label { font-size: 13px; font-weight: 700; color: #e6edf3; margin-bottom: 4px; }
 .question-sub { font-size: 11px; color: #8b949e; margin-bottom: 12px; }
+.match-desc { font-size: 12px; color: #cdd9e5; background: #1c2a3a; border-left: 3px solid #388bfd; border-radius: 4px; padding: 8px 12px; margin-bottom: 14px; }
 
 .radio-option {
   border: 1px solid #30363d; border-radius: 8px; padding: 12px 14px;
@@ -839,8 +841,8 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
       </div>
 
       <!-- Match description (shown based on type) -->
-      <div id="desc-hash" class="question-sub hidden" style="margin-bottom:14px;">This IOC only matches the specific file hash.</div>
-      <div id="desc-yara" class="question-sub hidden" style="margin-bottom:14px;">This IOC can match different file data hashes.</div>
+      <div id="desc-hash" class="match-desc hidden">This IOC only matches a specific file hash — every detection points to the same file content.</div>
+      <div id="desc-yara" class="match-desc hidden">This YARA rule can match files with different content hashes — suppressing it on one object or one hash may not cover all variants.</div>
 
       <div class="question-label" style="margin-bottom:12px;">Choose the scope of this exception.</div>
 
