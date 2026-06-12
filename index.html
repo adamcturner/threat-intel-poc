@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Threat Monitoring — Disable IOC POC</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+  font-size: 13px;
+  background: #0d1117;
+  color: #c9d1d9;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Top nav ── */
+.topnav {
+  background: #161b22; border-bottom: 1px solid #30363d;
+  display: flex; align-items: center; padding: 0 16px;
+  height: 44px; gap: 20px; flex-shrink: 0;
+}
+.topnav-logo { color: #58a6ff; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+.topnav-links { display: flex; gap: 0; }
+.topnav-links a {
+  color: #8b949e; text-decoration: none; font-size: 11px; font-weight: 600;
+  padding: 0 10px; height: 44px; display: flex; align-items: center;
+  border-bottom: 2px solid transparent; letter-spacing: .03em;
+}
+.topnav-links a.active { color: #e6edf3; border-bottom-color: #f0883e; }
+.topnav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.btn-ruby { background: linear-gradient(135deg,#1f4f7a,#2d2a45); border: 1px solid #30363d; border-radius: 16px; color: #b3d7ff; font-size: 11px; font-weight: 600; padding: 4px 12px; cursor: pointer; letter-spacing:.02em; }
+.nav-icon { color: #8b949e; font-size: 15px; cursor: pointer; }
+.nav-org { font-size: 11px; color: #8b949e; cursor: pointer; }
+
+/* ── Breadcrumb ── */
+.breadcrumb-bar {
+  background: #161b22; border-bottom: 1px solid #30363d;
+  padding: 8px 20px; display: flex; align-items: center; gap: 6px;
+  font-size: 11px; color: #8b949e; flex-shrink: 0;
+}
+.breadcrumb-bar a { color: #58a6ff; text-decoration: none; }
+.breadcrumb-bar a:hover { text-decoration: underline; }
+.sep { color: #444d56; }
+
+/* ── Page title bar ── */
+.page-title-bar {
+  background: #161b22; border-bottom: 1px solid #30363d;
+  padding: 12px 20px 0; flex-shrink: 0;
+}
+.page-title-row { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; }
+.page-title { font-size: 20px; font-weight: 700; color: #e6edf3; }
+.detected-badge {
+  background: #3d1f1f; border: 1px solid #6e2f2f;
+  color: #ffa198; font-size: 11px; font-weight: 600;
+  padding: 2px 9px; border-radius: 12px; white-space: nowrap;
+}
+
+/* ── Main split layout ── */
+.split-body { display: flex; flex: 1; overflow: hidden; }
+
+/* ── Left: file matches ── */
+.left-pane {
+  display: flex; flex-direction: column;
+  border-right: 1px solid #30363d; overflow: hidden;
+  flex: 1; min-width: 0;
+}
+.left-toolbar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 16px; border-bottom: 1px solid #30363d; flex-shrink: 0;
+}
+.section-title { font-size: 14px; font-weight: 700; color: #e6edf3; flex: 1; }
+.btn {
+  border-radius: 6px; font-size: 11px; font-weight: 600;
+  padding: 5px 13px; cursor: pointer; border: none;
+  display: inline-flex; align-items: center; gap: 5px; letter-spacing:.02em;
+}
+.btn-quarantine { background: #1f4f7a; border: 1px solid #2a6fa8; color: #79c0ff; }
+.btn-quarantine:hover { background: #2a6fa8; }
+.btn-secondary { background: #21262d; border: 1px solid #30363d; color: #c9d1d9; }
+.btn-secondary:hover { background: #30363d; }
+.btn-primary { background: #238636; color: #fff; border: 1px solid #2ea043; }
+.btn-primary:hover { background: #2ea043; }
+.btn-danger { background: #6e1a1a; color: #ffa198; border: 1px solid #8b2020; font-size: 11px; font-weight: 700; letter-spacing:.04em; }
+.btn-danger:hover { background: #8b2020; }
+.btn-ghost { background: none; border: none; color: #8b949e; padding: 5px 10px; cursor: pointer; font-size: 12px; border-radius: 6px; }
+.btn-ghost:hover { background: #21262d; color: #c9d1d9; }
+.btn-disabled { background: #21262d; border: 1px solid #21262d; color: #484f58; cursor: not-allowed; }
+
+.search-box {
+  background: #0d1117; border: 1px solid #30363d; border-radius: 6px;
+  padding: 5px 10px; font-size: 12px; color: #c9d1d9; width: 200px; outline: none;
+}
+.search-box::placeholder { color: #484f58; }
+
+.table-scroll { flex: 1; overflow-y: auto; }
+table { width: 100%; border-collapse: collapse; }
+thead tr { background: #161b22; position: sticky; top: 0; z-index: 1; }
+th {
+  text-align: left; font-size: 10px; font-weight: 700; color: #8b949e;
+  padding: 8px 12px; border-bottom: 1px solid #30363d;
+  text-transform: uppercase; letter-spacing: .05em; white-space: nowrap;
+}
+td { padding: 8px 12px; border-bottom: 1px solid #21262d; font-size: 11px; color: #c9d1d9; vertical-align: middle; }
+tr.selected td { background: #0d1f38; }
+tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
+.file-name { color: #79c0ff; font-size: 12px; font-weight: 500; }
+.match-yara { color: #b392f0; font-size: 10px; font-weight: 600; background: #2d2a45; padding: 2px 6px; border-radius: 4px; }
+.match-hash { color: #79c0ff; font-size: 10px; font-weight: 600; background: #1f3a5c; padding: 2px 6px; border-radius: 4px; }
+.pagination { padding: 10px 16px; text-align: center; font-size: 11px; color: #8b949e; border-top: 1px solid #21262d; flex-shrink: 0; }
+
+/* ── Right: IOC detail panel ── */
+.right-pane {
+  width: 380px; flex-shrink: 0;
+  display: flex; flex-direction: column; overflow-y: auto;
+  background: #0d1117;
+}
+.detail-header {
+  padding: 14px 16px 12px; border-bottom: 1px solid #21262d; flex-shrink: 0;
+}
+.detail-filename { font-size: 16px; font-weight: 700; color: #e6edf3; display: flex; align-items: center; gap: 8px; }
+.detail-subtitle { font-size: 11px; color: #8b949e; margin-top: 3px; }
+.detail-subtitle span { color: #f0883e; font-weight: 600; }
+
+.detail-section { padding: 12px 16px; border-bottom: 1px solid #21262d; }
+.detail-section-title {
+  font-size: 11px; font-weight: 700; color: #8b949e;
+  text-transform: uppercase; letter-spacing: .05em;
+  display: flex; align-items: center; gap: 6px; margin-bottom: 10px;
+}
+.ioc-details-title-row {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+}
+
+.kv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; }
+.kv-item {}
+.kv-label { font-size: 10px; color: #8b949e; text-transform: uppercase; letter-spacing:.04em; margin-bottom: 3px; }
+.kv-value { font-size: 12px; color: #e6edf3; display: flex; align-items: center; gap: 5px; }
+.source-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #1f2d3d; border: 1px solid #1f4f7a; border-radius: 4px;
+  padding: 2px 7px; font-size: 11px; color: #58a6ff;
+}
+.description-text { font-size: 12px; color: #8b949e; line-height: 1.5; margin-top: 4px; }
+
+/* Hash rows */
+.hash-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 0; border-bottom: 1px solid #1c2128;
+}
+.hash-row:last-child { border-bottom: none; }
+.hash-type { font-size: 10px; font-weight: 700; color: #8b949e; width: 44px; flex-shrink: 0; text-transform: uppercase; }
+.hash-val { font-family: "SF Mono","Fira Code",monospace; font-size: 10px; color: #c9d1d9; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.copy-btn { background: none; border: none; color: #484f58; cursor: pointer; padding: 2px 4px; border-radius: 3px; font-size: 11px; flex-shrink: 0; }
+.copy-btn:hover { color: #8b949e; background: #21262d; }
+.link-btn { background: none; border: none; color: #58a6ff; cursor: pointer; font-size: 11px; padding: 0; text-decoration: underline; }
+
+/* Snapshots */
+.snapshot-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+.snapshot-icon { color: #484f58; font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.snapshot-label { font-size: 10px; color: #8b949e; text-transform: uppercase; letter-spacing:.04em; margin-bottom: 2px; }
+.snapshot-date { font-size: 12px; color: #e6edf3; }
+
+/* Warning toast at bottom of detail */
+.detail-warning {
+  margin: 12px 16px;
+  background: #1f2d3d; border: 1px solid #1f4f7a; border-radius: 8px;
+  padding: 10px 12px; display: flex; align-items: flex-start; gap: 8px;
+  font-size: 11px; color: #79c0ff; line-height: 1.5; flex-shrink: 0;
+}
+.warn-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+/* ══════════════════════════════════
+   DISABLE MODAL
+══════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; backdrop-filter: blur(3px);
+}
+.modal-overlay.hidden { display: none; }
+.modal {
+  background: #161b22; border: 1px solid #30363d; border-radius: 12px;
+  width: 520px; max-width: 96vw; box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px 14px; border-bottom: 1px solid #30363d;
+}
+.modal-title { font-size: 15px; font-weight: 700; color: #e6edf3; }
+.modal-close { background: none; border: none; color: #8b949e; font-size: 18px; cursor: pointer; padding: 2px 6px; border-radius: 4px; line-height: 1; }
+.modal-close:hover { background: #21262d; color: #c9d1d9; }
+.modal-body { padding: 20px 22px; display: flex; flex-direction: column; gap: 16px; }
+
+.ioc-context {
+  background: #0d1117; border: 1px solid #21262d; border-radius: 8px;
+  padding: 10px 14px; display: flex; align-items: center; gap: 16px;
+}
+.ctx-block {}
+.ctx-label { font-size: 10px; color: #8b949e; text-transform: uppercase; letter-spacing:.04em; margin-bottom: 3px; }
+.ctx-val-name { font-size: 13px; color: #79c0ff; font-weight: 600; }
+.ctx-val { font-size: 12px; color: #e6edf3; }
+.badge { display: inline-flex; align-items: center; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; letter-spacing:.03em; }
+.badge-yara { background: #2d2a45; color: #b392f0; }
+.badge-hash { background: #1f3a5c; color: #79c0ff; }
+
+.question-label { font-size: 13px; font-weight: 700; color: #e6edf3; margin-bottom: 4px; }
+.question-sub { font-size: 11px; color: #8b949e; margin-bottom: 12px; }
+
+.radio-option {
+  border: 1px solid #30363d; border-radius: 8px; padding: 12px 14px;
+  cursor: pointer; transition: border-color .15s, background .15s;
+  display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px;
+}
+.radio-option:last-child { margin-bottom: 0; }
+.radio-option:hover { border-color: #58a6ff40; background: #161b22; }
+.radio-option.selected { border-color: #58a6ff; background: #0d1f38; }
+.radio-dot {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid #484f58; flex-shrink: 0; margin-top: 2px;
+  display: flex; align-items: center; justify-content: center; transition: border-color .15s;
+}
+.radio-option.selected .radio-dot { border-color: #58a6ff; }
+.radio-dot-inner { width: 8px; height: 8px; border-radius: 50%; background: #58a6ff; display: none; }
+.radio-option.selected .radio-dot-inner { display: block; }
+.radio-main { font-size: 12px; font-weight: 700; color: #e6edf3; margin-bottom: 3px; }
+.radio-desc { font-size: 11px; color: #8b949e; line-height: 1.55; }
+
+.sub-options { margin-top: 10px; display: flex; flex-direction: column; gap: 7px; }
+.sub-options.hidden { display: none; }
+.sub-option {
+  border: 1px solid #21262d; border-radius: 6px; padding: 10px 12px;
+  cursor: pointer; display: flex; align-items: flex-start; gap: 9px;
+  transition: border-color .15s, background .15s;
+}
+.sub-option:hover { border-color: #484f58; background: #161b22; }
+.sub-option.selected { border-color: #58a6ff; background: #0d1f38; }
+.sub-option.selected .radio-dot { border-color: #58a6ff; }
+.sub-option.selected .radio-dot-inner { display: block; }
+.sub-main { font-size: 12px; font-weight: 600; color: #e6edf3; margin-bottom: 3px; }
+.sub-desc { font-size: 11px; color: #8b949e; line-height: 1.5; }
+.more-hint { font-size: 11px; color: #484f58; text-align: center; padding: 5px 0 2px; font-style: italic; }
+
+.modal-footer {
+  display: flex; justify-content: flex-end; gap: 8px;
+  padding: 14px 22px 18px; border-top: 1px solid #30363d;
+}
+
+/* ══════════════════════════════════
+   DISABLED IOCs RESULTS PAGE
+══════════════════════════════════ */
+#results-page { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+
+.results-header {
+  background: #161b22; border-bottom: 1px solid #30363d;
+  padding: 0 24px; flex-shrink: 0;
+}
+.results-breadcrumb { font-size: 11px; color: #8b949e; padding: 10px 0 8px; display: flex; align-items: center; gap: 6px; }
+.results-breadcrumb a { color: #58a6ff; text-decoration: none; cursor: pointer; }
+.results-title-row { display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; }
+.results-title { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; color: #e6edf3; }
+
+.primary-tabs { display: flex; border-bottom: 1px solid #30363d; padding: 0 24px; background: #161b22; flex-shrink: 0; }
+.primary-tab {
+  font-size: 13px; color: #8b949e; padding: 10px 18px;
+  border: none; background: none; cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -1px; font-weight: 500;
+}
+.primary-tab:hover { color: #c9d1d9; }
+.primary-tab.active { color: #e6edf3; border-bottom-color: #58a6ff; }
+
+.results-body { display: flex; flex: 1; overflow: hidden; }
+.results-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.sub-tab-bar {
+  display: flex; padding: 0 16px; border-bottom: 1px solid #21262d;
+  background: #0d1117; flex-shrink: 0;
+}
+.sub-tab {
+  font-size: 12px; color: #8b949e; padding: 8px 14px;
+  border: none; background: none; cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.sub-tab:hover { color: #c9d1d9; }
+.sub-tab.active { color: #e6edf3; border-bottom-color: #58a6ff; }
+
+.action-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 20px; border-bottom: 1px solid #30363d; flex-shrink: 0;
+}
+
+.new-row td { animation: highlight-row 2s ease-out; }
+@keyframes highlight-row {
+  0%   { background: #1f3a2a; }
+  100% { background: transparent; }
+}
+
+.scope-all { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; color: #f0883e; background: #2d1f0e; border: 1px solid #4d3319; border-radius: 4px; padding: 2px 7px; }
+.scope-hash { font-family: "SF Mono","Fira Code",monospace; font-size: 10px; color: #8b949e; }
+.ioc-name { color: #79c0ff; font-size: 12px; }
+.ioc-mono { font-family: "SF Mono","Fira Code",monospace; font-size: 10px; color: #e6edf3; }
+.cell-copy { display: flex; align-items: center; gap: 5px; }
+
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  flex: 1; gap: 14px; padding: 60px; text-align: center;
+}
+.empty-title { font-size: 15px; font-weight: 600; color: #e6edf3; }
+.empty-desc { font-size: 13px; color: #8b949e; max-width: 440px; line-height: 1.6; }
+.coming-soon { display: inline-flex; align-items: center; gap: 5px; background: #1f2d3d; border: 1px solid #1f4f7a; border-radius: 6px; padding: 6px 14px; font-size: 12px; color: #58a6ff; }
+
+/* Toast */
+#toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: #238636; color: #fff; border-radius: 8px; padding: 10px 20px;
+  font-size: 13px; font-weight: 600; box-shadow: 0 4px 20px rgba(0,0,0,.5);
+  display: none; z-index: 200; white-space: nowrap;
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     PAGE 1: THREAT MONITORING DETECTION VIEW
+════════════════════════════════════════════ -->
+<div id="detection-page" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+
+  <!-- Top nav -->
+  <nav class="topnav">
+    <div class="topnav-logo">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Data Threat Analytics
+    </div>
+    <div class="topnav-links">
+      <a href="#">DASHBOARD</a>
+      <a href="#">ANOMALIES</a>
+      <a href="#">INVESTIGATION</a>
+      <a href="#">HUNTS</a>
+      <a href="#" class="active">THREATS</a>
+      <a href="#">INTEL FEED</a>
+      <a href="#">QUARANTINE</a>
+      <a href="#">EVENTS</a>
+      <a href="#">REPORTS</a>
+    </div>
+    <div class="topnav-right">
+      <button class="btn-ruby">⚡ RUBRIK AI</button>
+      <span class="nav-icon">🔔</span>
+      <span class="nav-icon">⚙</span>
+      <span class="nav-org">Global Organization ▾</span>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb-bar">
+    <a href="#">Threat Monitoring</a>
+    <span class="sep">›</span>
+    <span>Primary File Server</span>
+  </div>
+
+  <!-- Page title bar -->
+  <div class="page-title-bar">
+    <div class="page-title-row">
+      <div class="page-title">Primary File Server</div>
+      <div class="detected-badge">Three detected</div>
+    </div>
+  </div>
+
+  <!-- Split body -->
+  <div class="split-body">
+
+    <!-- LEFT: File Matches -->
+    <div class="left-pane">
+      <div class="left-toolbar">
+        <span class="section-title">File Matches</span>
+        <button class="btn btn-quarantine">QUARANTINE</button>
+        <input class="search-box" placeholder="Search by file name…" />
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:28px"><input type="checkbox"/></th>
+              <th>File</th>
+              <th>First Observed Snap.</th>
+              <th>File version (Last M…)</th>
+              <th>File Size</th>
+              <th>Match Type</th>
+              <th>Detected</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="selected" onclick="selectFile(this, 'eicar.com', 3)">
+              <td><input type="checkbox" checked/></td>
+              <td><span class="file-name">eicar.com</span></td>
+              <td>May 12, 2026, 8:21…</td>
+              <td>Jun 12, 2026, 6:35…</td>
+              <td>68 B</td>
+              <td><span class="match-yara">YARA rule</span></td>
+              <td>Jun 11, 2026, 1:2…</td>
+            </tr>
+            <tr onclick="selectFile(this, 'eicar140.dll', 1)">
+              <td><input type="checkbox"/></td>
+              <td><span class="file-name">eicar140.dll</span></td>
+              <td>Jun 11, 2026, 12:5…</td>
+              <td>Jun 9, 2026, 11:4…</td>
+              <td>140.08 KB</td>
+              <td><span class="match-hash">File hash</span></td>
+              <td>Jun 11, 2026, 7:2…</td>
+            </tr>
+            <tr onclick="selectFile(this, 'eicar_nt_connection…', 1)">
+              <td><input type="checkbox"/></td>
+              <td><span class="file-name">eicar_nt_connection…</span></td>
+              <td>Jun 11, 2026, 12:5…</td>
+              <td>Jun 11, 2026, 11:…</td>
+              <td>1.15 MB</td>
+              <td><span class="match-yara">YARA rule</span></td>
+              <td>Jun 11, 2026, 7:2…</td>
+            </tr>
+            <tr onclick="selectFile(this, 'eicar.dll', 1)">
+              <td><input type="checkbox"/></td>
+              <td><span class="file-name">eicar.dll</span></td>
+              <td>Jun 11, 2026, 12:5…</td>
+              <td>Jun 11, 2026, 11:…</td>
+              <td>2.48 MB</td>
+              <td><span class="match-yara">YARA rule</span></td>
+              <td>Jun 11, 2026, 7:2…</td>
+            </tr>
+            <tr onclick="selectFile(this, 'phaethon.exe', 1)">
+              <td><input type="checkbox"/></td>
+              <td><span class="file-name">phaethon.exe</span></td>
+              <td>Jun 11, 2026, 12:5…</td>
+              <td>Jun 11, 2026, 11:…</td>
+              <td>116.26 KB</td>
+              <td><span class="match-yara">YARA rule</span></td>
+              <td>Jun 11, 2026, 7:2…</td>
+            </tr>
+            <tr onclick="selectFile(this, 'eicar_print_spooler…', 1)">
+              <td><input type="checkbox"/></td>
+              <td><span class="file-name">eicar_print_spooler…</span></td>
+              <td>Jun 11, 2026, 12:5…</td>
+              <td>Jun 11, 2026, 11:…</td>
+              <td>5.36 MB</td>
+              <td><span class="match-yara">YARA rule</span></td>
+              <td>Jun 11, 2026, 7:2…</td>
+            </tr>
+            <tr onclick="selectFile(this, 'msacm32.dll', 1)">
+              <td><input type="checkbox"/></td>
+              <td><span class="file-name">msacm32.dll</span></td>
+              <td>Jun 11, 2026, 12:5…</td>
+              <td>Jun 11, 2026, 11:…</td>
+              <td>2.77 MB</td>
+              <td><span class="match-hash">File hash</span></td>
+              <td>Jun 11, 2026, 7:2…</td>
+            </tr>
+            <tr onclick="selectFile(this, 'ntlmrelay.py', 1)">
+              <td><input type="checkbox"/></td>
+              <td><span class="file-name">ntlmrelay.py</span></td>
+              <td>Jun 11, 2026, 12:5…</td>
+              <td>Jun 11, 2026, 11:…</td>
+              <td>174 KB</td>
+              <td><span class="match-yara">YARA rule</span></td>
+              <td>Jun 11, 2026, 7:2…</td>
+            </tr>
+            <tr onclick="selectFile(this, 'meterpreter_java…', 1)">
+              <td><input type="checkbox"/></td>
+              <td><span class="file-name">meterpreter_java…</span></td>
+              <td>Jun 11, 2026, 12:5…</td>
+              <td>Jun 11, 2026, 11:…</td>
+              <td>2.74 MB</td>
+              <td><span class="match-yara">YARA rule</span></td>
+              <td>Jun 11, 2026, 7:2…</td>
+            </tr>
+            <tr onclick="selectFile(this, 'msacm_pro.exe', 1)">
+              <td><input type="checkbox"/></td>
+              <td><span class="file-name">msacm_pro.exe</span></td>
+              <td>Jun 11, 2026, 12:5…</td>
+              <td>Jun 11, 2026, 11:…</td>
+              <td>1.90 MB</td>
+              <td><span class="match-yara">YARA rule</span></td>
+              <td>Jun 11, 2026, 7:2…</td>
+            </tr>
+            <tr onclick="selectFile(this, 'mimikatz_al.dll', 1)">
+              <td><input type="checkbox"/></td>
+              <td><span class="file-name">mimikatz_al.dll</span></td>
+              <td>Jun 11, 2026, 12:5…</td>
+              <td>Jun 11, 2026, 11:…</td>
+              <td>6.78 MB</td>
+              <td><span class="match-hash">File hash</span></td>
+              <td>Jun 11, 2026, 7:2…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">1 – 50 of 1,230</div>
+    </div>
+
+    <!-- RIGHT: IOC detail panel -->
+    <div class="right-pane">
+
+      <div class="detail-header">
+        <div class="detail-filename">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <span id="detail-fname">eicar.com</span>
+        </div>
+        <div class="detail-subtitle"><span id="detail-matchcount">3</span> matches · Google Threat Intelligence</div>
+      </div>
+
+      <!-- IOC Details -->
+      <div class="detail-section">
+        <div class="ioc-details-title-row">
+          <div class="detail-section-title">
+            IOC Details
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          </div>
+          <button class="btn btn-danger" onclick="openDisableModal()">DISABLE IOCS</button>
+        </div>
+        <div class="kv-grid">
+          <div class="kv-item">
+            <div class="kv-label">Threat Intel Source</div>
+            <div class="kv-value"><span class="source-chip">🌐 Google Threat…</span></div>
+          </div>
+          <div class="kv-item">
+            <div class="kv-label">Threat Family</div>
+            <div class="kv-value">Eicar</div>
+          </div>
+          <div class="kv-item" style="grid-column:1/-1">
+            <div class="kv-label">Author</div>
+            <div class="kv-value">Rubrik</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <div class="kv-label">Description</div>
+          <div class="description-text">Eicar: a standard AV test file</div>
+        </div>
+      </div>
+
+      <!-- Hashes -->
+      <div class="detail-section">
+        <div class="detail-section-title">Hashes</div>
+        <div class="hash-row">
+          <span class="hash-type">MD5</span>
+          <span class="hash-val">44d88612fea8a8f36018365600b2e</span>
+          <button class="copy-btn">⧉</button>
+        </div>
+        <div class="hash-row">
+          <span class="hash-type">SHA256</span>
+          <span class="hash-val">275a427c06ce4f9c0019bd6f9c0be05…</span>
+          <button class="copy-btn">⧉</button>
+        </div>
+        <div class="hash-row">
+          <span class="hash-type">SHA1</span>
+          <span class="hash-val">3395856ce8f1f2b73826ee726023057…</span>
+          <button class="copy-btn">⧉</button>
+        </div>
+        <div style="margin-top:8px;">
+          <button class="link-btn">Check file reputation in VirusTotal ↗</button>
+        </div>
+      </div>
+
+      <!-- Affected Snapshots -->
+      <div class="detail-section">
+        <div class="detail-section-title">Affected Snapshots</div>
+        <div class="snapshot-row">
+          <span class="snapshot-icon">📸</span>
+          <div>
+            <div class="snapshot-label">First Observed Snapshot
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2" style="display:inline;margin-left:3px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            </div>
+            <div class="snapshot-date">Jun 12, 2026, 6:45 AM</div>
+          </div>
+          <div style="margin-left:auto;">
+            <div class="snapshot-label">First Matching Snapshot
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2" style="display:inline;margin-left:3px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            </div>
+            <div class="snapshot-date">Jun 12, 2026, 6:45 AM</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Warning -->
+      <div class="detail-warning">
+        <span class="warn-icon">ℹ</span>
+        <span>There could be older snapshots that contain the file. We recommend performing a <button class="link-btn">threat hunt</button> to check all snapshots.</span>
+      </div>
+
+    </div><!-- end right-pane -->
+  </div><!-- end split-body -->
+</div><!-- end detection-page -->
+
+
+<!-- ════════════════════════════════════════════
+     PAGE 2: DISABLED IOCs RESULTS
+════════════════════════════════════════════ -->
+<div id="results-page">
+
+  <div class="results-header">
+    <div class="results-breadcrumb">
+      <a onclick="goBack()">Threat Monitoring</a>
+      <span class="sep">›</span>
+      <a onclick="goBack()">Primary File Server</a>
+      <span class="sep">›</span>
+      <span>Disabled IOCs</span>
+    </div>
+    <div class="results-title-row">
+      <div class="results-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4A9EF4" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+        </svg>
+        Google Threat Intelligence — Disabled IOCs
+      </div>
+      <button class="btn btn-secondary" onclick="goBack()">← Back to detection</button>
+    </div>
+  </div>
+
+  <!-- Primary tabs -->
+  <div class="primary-tabs">
+    <button class="primary-tab" onclick="switchPrimary('byObject', this)">By Object</button>
+    <button class="primary-tab active" onclick="switchPrimary('byFile', this)">By File</button>
+  </div>
+
+  <div class="results-body">
+    <div class="results-main">
+
+      <!-- BY OBJECT -->
+      <div id="tab-byObject" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+        <div class="action-bar">
+          <span style="font-size:12px;color:#8b949e;">0 selected</span>
+          <button class="btn btn-disabled" disabled>Enable IOCs</button>
+        </div>
+        <div style="flex:1;overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:32px"><input type="checkbox"/></th>
+                <th>Object</th>
+                <th>IOC</th>
+                <th>IOC Type</th>
+                <th>Threat Family</th>
+                <th>Disabled On</th>
+                <th>Disabled By</th>
+              </tr>
+            </thead>
+            <tbody id="object-table-body">
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td>🖥 honeypot-server-01</td>
+                <td><div class="cell-copy"><span class="ioc-name">detect_ransomware_behavior</span><button class="copy-btn">⧉</button></div></td>
+                <td><span class="badge badge-yara">Yara rule</span></td>
+                <td>Ransomware</td>
+                <td style="white-space:nowrap">Feb 12, 2026, 9:50 AM</td>
+                <td>Adam.Turner@rubrik.com</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td>🖥 test-env-lab-02</td>
+                <td><div class="cell-copy"><span class="ioc-mono">3395856ce8f1f2b73826ee7260…</span><button class="copy-btn">⧉</button></div></td>
+                <td><span class="badge badge-hash">File hash</span></td>
+                <td>Eicar</td>
+                <td style="white-space:nowrap">Feb 14, 2026, 2:15 PM</td>
+                <td>Adam.Turner@rubrik.com</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td>☁️ pentest-vm-east-1</td>
+                <td><div class="cell-copy"><span class="ioc-name">suspicious_network_activity</span><button class="copy-btn">⧉</button></div></td>
+                <td><span class="badge badge-yara">Yara rule</span></td>
+                <td>APT</td>
+                <td style="white-space:nowrap">Feb 15, 2026, 11:00 AM</td>
+                <td>security@rubrik.com</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- BY FILE -->
+      <div id="tab-byFile" style="display:flex;flex-direction:column;flex:1;overflow:hidden;">
+        <div class="sub-tab-bar">
+          <button class="sub-tab active" onclick="switchSub('all',this)">All</button>
+          <button class="sub-tab" onclick="switchSub('hashSub',this)">Hash</button>
+          <button class="sub-tab" onclick="switchSub('yaraSub',this)">Yara</button>
+        </div>
+
+        <!-- All -->
+        <div id="sub-all" style="flex:1;overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:32px"><input type="checkbox"/></th>
+                <th>IOC</th>
+                <th>IOC Type</th>
+                <th>Scope</th>
+                <th>Threat Family</th>
+                <th>Disabled On</th>
+                <th>Disabled By</th>
+              </tr>
+            </thead>
+            <tbody id="all-table-body">
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td><div class="cell-copy"><span class="ioc-mono">44d88612fea8a8f360183656…</span><button class="copy-btn">⧉</button></div></td>
+                <td><span class="badge badge-hash">File hash</span></td>
+                <td><div class="cell-copy"><span class="scope-hash">44d88612fea8a8f360183656…</span><button class="copy-btn">⧉</button></div></td>
+                <td>Eicar</td>
+                <td style="white-space:nowrap">Feb 12, 2026, 9:50 AM</td>
+                <td>Adam.Turner@rubrik.com</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td><div class="cell-copy"><span class="ioc-name">detect_ransomware_behavior</span><button class="copy-btn">⧉</button></div></td>
+                <td><span class="badge badge-yara">Yara rule</span></td>
+                <td><div class="cell-copy"><span class="scope-hash">a3f5b8c2d1e4f09712345678…</span><button class="copy-btn">⧉</button></div></td>
+                <td>Ransomware</td>
+                <td style="white-space:nowrap">Feb 13, 2026, 4:30 PM</td>
+                <td>Adam.Turner@rubrik.com</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td><div class="cell-copy"><span class="ioc-name">suspicious_network_activity</span><button class="copy-btn">⧉</button></div></td>
+                <td><span class="badge badge-yara">Yara rule</span></td>
+                <td><span class="scope-all">⚠ All files</span></td>
+                <td>APT</td>
+                <td style="white-space:nowrap">Feb 14, 2026, 10:00 AM</td>
+                <td>security@rubrik.com</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td><div class="cell-copy"><span class="ioc-mono">3395856ce8f1f2b73826ee72…</span><button class="copy-btn">⧉</button></div></td>
+                <td><span class="badge badge-hash">File hash</span></td>
+                <td><div class="cell-copy"><span class="scope-hash">3395856ce8f1f2b73826ee72…</span><button class="copy-btn">⧉</button></div></td>
+                <td>Eicar</td>
+                <td style="white-space:nowrap">Feb 15, 2026, 8:20 AM</td>
+                <td>analyst@rubrik.com</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Hash -->
+        <div id="sub-hashSub" style="display:none;flex:1;overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:32px"><input type="checkbox"/></th>
+                <th>IOC</th>
+                <th>Disabled For File Hash</th>
+                <th>Threat Family</th>
+                <th>Disabled On</th>
+                <th>Disabled By</th>
+              </tr>
+            </thead>
+            <tbody id="hash-table-body">
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td><div class="cell-copy"><span class="ioc-mono">44d88612fea8a8f36018365600b2e</span><button class="copy-btn">⧉</button></div></td>
+                <td><div class="cell-copy"><span class="scope-hash">44d88612fea8a8f36018365600b2e</span><button class="copy-btn">⧉</button></div></td>
+                <td>Eicar</td>
+                <td style="white-space:nowrap">Feb 12, 2026, 9:50 AM</td>
+                <td>Adam.Turner@rubrik.com</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td><div class="cell-copy"><span class="ioc-mono">3395856ce8f1f2b73826ee7260230577</span><button class="copy-btn">⧉</button></div></td>
+                <td><div class="cell-copy"><span class="scope-hash">3395856ce8f1f2b73826ee7260230577</span><button class="copy-btn">⧉</button></div></td>
+                <td>Eicar</td>
+                <td style="white-space:nowrap">Feb 15, 2026, 8:20 AM</td>
+                <td>analyst@rubrik.com</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Yara -->
+        <div id="sub-yaraSub" style="display:none;flex:1;overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:32px"><input type="checkbox"/></th>
+                <th>Yara Rule</th>
+                <th>Scope</th>
+                <th>Threat Family</th>
+                <th>Disabled On</th>
+                <th>Disabled By</th>
+              </tr>
+            </thead>
+            <tbody id="yara-table-body">
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td><div class="cell-copy"><span class="ioc-name">detect_ransomware_behavior</span><button class="copy-btn">⧉</button></div></td>
+                <td><div class="cell-copy"><span class="scope-hash">a3f5b8c2d1e4f09712345678abcd…</span><button class="copy-btn">⧉</button></div></td>
+                <td>Ransomware</td>
+                <td style="white-space:nowrap">Feb 13, 2026, 4:30 PM</td>
+                <td>Adam.Turner@rubrik.com</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"/></td>
+                <td><div class="cell-copy"><span class="ioc-name">suspicious_network_activity</span><button class="copy-btn">⧉</button></div></td>
+                <td><span class="scope-all">⚠ All files</span></td>
+                <td>APT</td>
+                <td style="white-space:nowrap">Feb 14, 2026, 10:00 AM</td>
+                <td>security@rubrik.com</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div><!-- end results-page -->
+
+
+<!-- ════════════════════════════════════════════
+     DISABLE MODAL
+════════════════════════════════════════════ -->
+<div class="modal-overlay hidden" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Disable IOC</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Context -->
+      <div class="ioc-context">
+        <div class="ctx-block">
+          <div class="ctx-label">IOC</div>
+          <div class="ctx-val-name">detect_ransomware_behavior</div>
+        </div>
+        <div class="ctx-block" style="margin-left:auto;text-align:right;">
+          <div class="ctx-label">Type</div>
+          <div><span class="badge badge-yara">Yara rule</span></div>
+        </div>
+      </div>
+
+      <!-- Scope question -->
+      <div>
+        <div class="question-label">How many objects should this IOC be disabled for?</div>
+        <div class="question-sub">Choose the scope of this exception.</div>
+
+        <!-- Option 1: 1 object -->
+        <div class="radio-option selected" id="opt-one" onclick="selectScope('one')">
+          <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+          <div>
+            <div class="radio-main">1 object</div>
+            <div class="radio-desc">The IOC is disabled for all files on this object. Other objects will continue to process the IOC.</div>
+          </div>
+        </div>
+
+        <!-- Option 2: More than one object -->
+        <div class="radio-option" id="opt-many" onclick="selectScope('many')">
+          <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+          <div style="flex:1;">
+            <div class="radio-main">More than one object</div>
+            <div class="radio-desc">Disable this IOC using a broader scope.</div>
+
+            <div class="sub-options hidden" id="sub-options">
+              <div style="height:6px;"></div>
+
+              <div class="sub-option" id="sub-hashopt" onclick="event.stopPropagation();selectSub('hashopt')">
+                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+                <div>
+                  <div class="sub-main">Disable for all copies of matched file data hash</div>
+                  <div class="sub-desc">The IOC will ignore all files containing the same data hash as the matched file. Other files won't be affected.</div>
+                </div>
+              </div>
+
+              <div class="sub-option" id="sub-acctopt" onclick="event.stopPropagation();selectSub('acctopt')">
+                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+                <div>
+                  <div class="sub-main">Disable this IOC for all files across the entire account</div>
+                  <div class="sub-desc">The IOC will not be matched for any files. This removes all detection coverage for this IOC.</div>
+                </div>
+              </div>
+
+              <div class="more-hint">Additional scoping options coming soon</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="confirmDisable()">Disable IOC</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+  var currentScope = 'one';
+  var currentSub = null;
+
+  function selectFile(row, fname, matches) {
+    document.querySelectorAll('tr.selected').forEach(r => r.classList.remove('selected'));
+    row.classList.add('selected');
+    document.getElementById('detail-fname').textContent = fname;
+    document.getElementById('detail-matchcount').textContent = matches;
+  }
+
+  function openDisableModal() {
+    selectScope('one');
+    document.getElementById('modal-overlay').classList.remove('hidden');
+  }
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.add('hidden');
+  }
+  document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  function selectScope(which) {
+    currentScope = which;
+    var optOne = document.getElementById('opt-one');
+    var optMany = document.getElementById('opt-many');
+    var subOpts = document.getElementById('sub-options');
+    if (which === 'one') {
+      optOne.classList.add('selected'); optMany.classList.remove('selected');
+      subOpts.classList.add('hidden'); currentSub = null;
+    } else {
+      optMany.classList.add('selected'); optOne.classList.remove('selected');
+      subOpts.classList.remove('hidden');
+      if (!currentSub) selectSub('hashopt');
+    }
+  }
+
+  function selectSub(which) {
+    currentSub = which;
+    document.getElementById('sub-hashopt').classList.toggle('selected', which === 'hashopt');
+    document.getElementById('sub-acctopt').classList.toggle('selected', which === 'acctopt');
+  }
+
+  function confirmDisable() {
+    closeModal();
+    var now = 'Jun 12, 2026, ' + new Date().toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'});
+    var user = 'Adam.Turner@rubrik.com';
+    var fname = document.getElementById('detail-fname').textContent;
+
+    if (currentScope === 'one') {
+      // Add to By Object table
+      addObjectRow(fname, 'detect_ransomware_behavior', 'yara', 'Ransomware', now, user);
+      showToast('✓ IOC disabled for ' + fname + ' only.');
+    } else if (currentSub === 'hashopt') {
+      addFileRow('detect_ransomware_behavior', 'yara', 'hash', '44d88612fea8a8f36018365600b2e', 'Ransomware', now, user);
+      showToast('✓ IOC disabled for all copies of matched file hash.');
+    } else {
+      addFileRow('detect_ransomware_behavior', 'yara', 'all', null, 'Ransomware', now, user);
+      showToast('✓ IOC disabled account-wide.');
+    }
+
+    setTimeout(function() { showResultsPage(); }, 1200);
+  }
+
+  function addObjectRow(objName, iocName, iocType, family, date, user) {
+    var badge = iocType === 'yara'
+      ? '<span class="badge badge-yara">Yara rule</span>'
+      : '<span class="badge badge-hash">File hash</span>';
+    var ioc = iocType === 'yara'
+      ? '<span class="ioc-name">' + iocName + '</span>'
+      : '<span class="ioc-mono">' + iocName + '</span>';
+    var row = '<tr class="new-row"><td><input type="checkbox"/></td>' +
+      '<td>🖥 ' + objName + '</td>' +
+      '<td><div class="cell-copy">' + ioc + '<button class="copy-btn">⧉</button></div></td>' +
+      '<td>' + badge + '</td>' +
+      '<td>' + family + '</td>' +
+      '<td style="white-space:nowrap">' + date + '</td>' +
+      '<td>' + user + '</td></tr>';
+    var objTbody = document.getElementById('object-table-body');
+    objTbody.innerHTML = row + objTbody.innerHTML;
+  }
+
+  function addFileRow(iocName, iocType, scopeType, scopeHash, family, date, user) {
+    var badge = iocType === 'yara'
+      ? '<span class="badge badge-yara">Yara rule</span>'
+      : '<span class="badge badge-hash">File hash</span>';
+    var iocCell = iocType === 'yara'
+      ? '<span class="ioc-name">' + iocName + '</span>'
+      : '<span class="ioc-mono">' + iocName + '</span>';
+    var scopeCell = scopeType === 'all'
+      ? '<span class="scope-all">⚠ All files</span>'
+      : '<div class="cell-copy"><span class="scope-hash">' + scopeHash + '</span><button class="copy-btn">⧉</button></div>';
+
+    // All table
+    var allRow = '<tr class="new-row"><td><input type="checkbox"/></td>' +
+      '<td><div class="cell-copy">' + iocCell + '<button class="copy-btn">⧉</button></div></td>' +
+      '<td>' + badge + '</td>' +
+      '<td>' + scopeCell + '</td>' +
+      '<td>' + family + '</td>' +
+      '<td style="white-space:nowrap">' + date + '</td>' +
+      '<td>' + user + '</td></tr>';
+    var allTbody = document.getElementById('all-table-body');
+    allTbody.innerHTML = allRow + allTbody.innerHTML;
+
+    if (iocType === 'hash') {
+      var hashRow = '<tr class="new-row"><td><input type="checkbox"/></td>' +
+        '<td><div class="cell-copy"><span class="ioc-mono">' + iocName + '</span><button class="copy-btn">⧉</button></div></td>' +
+        '<td><div class="cell-copy"><span class="scope-hash">' + scopeHash + '</span><button class="copy-btn">⧉</button></div></td>' +
+        '<td>' + family + '</td>' +
+        '<td style="white-space:nowrap">' + date + '</td>' +
+        '<td>' + user + '</td></tr>';
+      var hashTbody = document.getElementById('hash-table-body');
+      hashTbody.innerHTML = hashRow + hashTbody.innerHTML;
+    }
+
+    if (iocType === 'yara') {
+      var yaraRow = '<tr class="new-row"><td><input type="checkbox"/></td>' +
+        '<td><div class="cell-copy"><span class="ioc-name">' + iocName + '</span><button class="copy-btn">⧉</button></div></td>' +
+        '<td>' + scopeCell + '</td>' +
+        '<td>' + family + '</td>' +
+        '<td style="white-space:nowrap">' + date + '</td>' +
+        '<td>' + user + '</td></tr>';
+      var yaraTbody = document.getElementById('yara-table-body');
+      yaraTbody.innerHTML = yaraRow + yaraTbody.innerHTML;
+    }
+  }
+
+  function showResultsPage() {
+    document.getElementById('detection-page').style.display = 'none';
+    document.getElementById('results-page').style.display = 'flex';
+    // Default: show By File tab if scope was file-based, By Object if object-based
+    if (currentScope === 'one') {
+      switchPrimary('byObject', document.querySelectorAll('.primary-tab')[0]);
+    } else {
+      switchPrimary('byFile', document.querySelectorAll('.primary-tab')[1]);
+    }
+  }
+
+  function goBack() {
+    document.getElementById('results-page').style.display = 'none';
+    document.getElementById('detection-page').style.display = 'flex';
+  }
+
+  function switchPrimary(id, btn) {
+    document.querySelectorAll('.primary-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-byObject').style.display = 'none';
+    document.getElementById('tab-byFile').style.display = 'none';
+    document.getElementById('tab-' + id).style.display = 'flex';
+  }
+
+  function switchSub(id, btn) {
+    document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    ['all','hashSub','yaraSub'].forEach(function(s) {
+      document.getElementById('sub-' + s).style.display = s === id ? '' : 'none';
+    });
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.style.display = 'block';
+    setTimeout(function() { t.style.display = 'none'; }, 2500);
+  }
+</script>
+</body>
+</html>
