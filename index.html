@@ -860,10 +860,7 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
         <div class="radio-dot"><div class="radio-dot-inner"></div></div>
         <div style="flex:1;">
           <div class="radio-main">All Objects</div>
-          <div class="radio-desc">Disable this IOC using a broader scope.</div>
-
-          <!-- Hash: inline description, no nested choice -->
-          <div class="hidden" id="sub-hash" style="margin-top:8px;font-size:12px;color:#cdd9e5;">This IOC will not be matched against this file hash on any object.</div>
+          <div class="radio-desc" id="opt-many-desc">Disable this IOC using a broader scope.</div>
 
           <!-- Yara sub: two options -->
           <div class="sub-options hidden" id="sub-yara">
@@ -925,6 +922,11 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
     document.getElementById('desc-hash').classList.toggle('hidden', currentMatchType !== 'hash');
     document.getElementById('desc-yara').classList.toggle('hidden', currentMatchType !== 'yara');
 
+    // Set All Objects description based on match type
+    document.getElementById('opt-many-desc').textContent = currentMatchType === 'hash'
+      ? 'This IOC will not be matched against this file hash on any object.'
+      : 'Disable this IOC using a broader scope.';
+
     // Reset to Single Object
     selectScope('one');
     document.getElementById('modal-overlay').classList.remove('hidden');
@@ -942,25 +944,21 @@ tr:not(.selected):hover td { background: #161b22; cursor: pointer; }
     currentScope = which;
     var optOne = document.getElementById('opt-one');
     var optMany = document.getElementById('opt-many');
-    var subHash = document.getElementById('sub-hash');
     var subYara = document.getElementById('sub-yara');
 
     if (which === 'one') {
       optOne.classList.add('selected');
       optMany.classList.remove('selected');
-      subHash.classList.add('hidden');
       subYara.classList.add('hidden');
       currentSub = null;
     } else {
       optMany.classList.add('selected');
       optOne.classList.remove('selected');
       if (currentMatchType === 'hash') {
-        subHash.classList.remove('hidden');
         subYara.classList.add('hidden');
         currentSub = 'hash-all';
       } else {
         subYara.classList.remove('hidden');
-        subHash.classList.add('hidden');
         if (!currentSub) selectSub('yara-hash');
       }
     }
